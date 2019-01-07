@@ -30,17 +30,24 @@ To set up your python environment to run the code in this repository, follow the
 
 2. Clone the repository and navigate to the folder.  Then, install the dependencies in the `requirements.txt` file.
 ```bash
-git clone https://github.com/clauszitzelsberger/Navigation_RL.git
-cd Navigation_RL
+git clone https://github.com/clauszitzelsberger/continuous-control-rl.git
+cd continuous-control-rl
 pip install pip install -r requirements.txt
 ```
 
 3. Download the Unity Environment
 Download the environment that mathces your operation system, then place the file in the `Navigation_RL/` folder and unizip the file.
-	- [__Linux__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Linux.zip)
-	- [__Mac OSX__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana.app.zip)
-	- [__Windows (32-bit)__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Windows_x86.zip)
-	- [__Windows (64-bit)__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P1/Banana/Banana_Windows_x86_64.zip)
+a) **Version 1: 1 Agent:**
+	- [__Linux__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Linux.zip)
+	- [__Mac OSX__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher.app.zip)
+	- [__Windows (32-bit)__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Windows_x86.zip)
+	- [__Windows (64-bit)__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Windows_x86_64.zip)
+	
+b) ** Version 2: 20 Agents:**
+	- [__Linux__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Linux.zip)
+        - [__Mac OSX__] [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher.app.zip)
+        - [__Windows (32-bit)__] [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Windows_x86.zip)
+        - [__Windows (64-bit)__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Windows_x86_64.zip)
 
 4. Create an [IPython kernel](http://ipython.readthedocs.io/en/stable/install/kernel_install.html) for the `name` environment.  
 ```bash
@@ -51,10 +58,10 @@ python -m ipykernel install --user --name name --display-name "name"
   
 ## Setup of repository
 
-Apart from the `Readme.md` file this repository consists of the following files:
+Apart from the `Readme.md` and the `requirements.txt` file this repository consists of the following files:
 
-1. `agent.py`: Agent and ReplayBuffer class with all required functions
-2. `model.py`: QNetwork class
+1. `agent.py`: Agent and ReplayBuffer classes with all required functions
+2. `model.py`: Actor and Critc Network classes
 3. `run.py`: Script which will train the agent. Can be run directly from the terminal.
 4. `report.ipynb`: As an alternative to the `run.py` script this Jupyter Notebook has a step-by-step structure. Here the learning algorithm is described in detail
 5. `checkpoint.pth`: Contains the weights of a successful QNetwork
