@@ -69,11 +69,33 @@ class Agent():
         # Noise process
         self.noise = OUNoise(action_size, seed)
         
-    def step(self):
-        pass
-    
-    def act(self):
-        pass
+    def step(self, state, action, reward, next_state, done):
+        # Save experience in replay buffer
+        self.memory.add(state, action, reward, next_state, done)
+        
+        # If enough samples are available in memory, get random subset and learn
+        if len(self.memory) > self.batch_size:
+            sample = self.memory.sample()
+            self.__learn(sample, self.gamma)
+
+    def act(self, state, add_noise=True):
+        """Returns action given a state according to current policy
+
+        Params
+        ======
+            state (array_like): current state
+            add_noise (bool): handles exploration
+        """
+        state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+        self.actor_local.eval()
+        with torch.no_grad():
+            action = self.qnet_local(state).cpu().data.numpy()
+        self.actor_local.train()
+
+        if add_noise:
+            action += self.noise.sample()
+        return np.clip(action, -1, 1)
+
     
     def __reset(self):
         pass
