@@ -98,10 +98,37 @@ class Agent():
 
     
     def __reset(self):
-        pass
+        self.noise.reset()
     
-    def __learn(self):
-        pass
+    def __learn(self, sample, gamma):
+        """
+        Params
+        ======
+            sample (Tuple[torch.Tensor]): tuple of (s, a, r, s', done) tuples
+            gamma (float): discount factor
+        """
+        states, actions, rewards, next_states, dones = sample
+        
+        #----------------- Critic
+        # Next actions and actions values
+        actions_next = self.actor_target(next_states)
+        Q_targets_next = self.critic_target(next_states, actions_next)
+        
+        # Compute Q targets for current states
+        Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
+
+        # Get expected Q values from local Critic network
+        Q_expected = self.critic_local(states, actions)
+        
+        # Compute loss
+        critic_loss = F.mse_loss(Q_targets, Q_expected)
+        
+        # Minimize loss
+        self.optimizer.zero_grad()
+        critic_loss.backward()
+        self.optimizer.step()
+        
+        #----------------- Actor
     
     def __soft_update(self):
         
