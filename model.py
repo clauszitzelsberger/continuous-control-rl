@@ -29,6 +29,7 @@ class Actor(nn.Module):
         self.fc1 = nn.Linear(state_size, fc1_size)
         self.fc2 = nn.Linear(fc1_size, fc2_size)
         self.output = nn.Linear(fc2_size, action_size)
+        self.reset_parameters()
         
     def forward(self, state):
         """Build a network which maps states to deterministic continuous actions"""
@@ -64,6 +65,7 @@ class Critic(nn.Module):
         self.fc1 = nn.Linear(state_size, fc1_state_size)
         self.fc2 = nn.Linear(fc1_state_size + action_size, fc2_size) #include actions
         self.output = nn.Linear(fc2_size, 1)
+        self.reset_parameters()
         
     def forward(self, state, action):
         """Build a critic (value) network that maps (state, action) pairs -> Q-values."""
