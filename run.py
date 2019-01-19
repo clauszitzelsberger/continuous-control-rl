@@ -10,7 +10,7 @@ from agent import Agent
 
 def initialize_env(unity_file):
     # Initialize the environment
-    env = UnityEnvironment(file_name=unity_file)
+    env = UnityEnvironment(file_name=unity_file, worker_id=2)
 
     # Get default brain
     brain_name = env.brain_names[0]
@@ -114,13 +114,14 @@ def load_checkpoints(agent, filepath_actor, filepath_critic):
 if __name__ == '__main__':
     # Hyperparameters
     N = 2000
-    BUFFER_SIZE = int(1e5)
-    BATCH_SIZE = 64
+    BUFFER_SIZE = int(1e6)
+    BATCH_SIZE = 128
     GAMMA = .99
     TAU = 1e-3
     LEARNING_RATE_ACTOR = 1e-4
     LEARNING_RATE_CRITIC = 1e-3
     WEIGHT_DECAY = 1e-2
+    UPDATE_LOCAL = 4
     
     
     env, brain_name, state_size, action_size = \
@@ -131,7 +132,7 @@ if __name__ == '__main__':
                   buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE,
                   gamma=GAMMA, tau=TAU,
                   lr_a=LEARNING_RATE_ACTOR, lr_c=LEARNING_RATE_CRITIC,
-                  weight_decay=WEIGHT_DECAY)
+                  weight_decay=WEIGHT_DECAY, update_local=UPDATE_LOCAL)
     
     # Train agent
     scores = ddpg(env, brain_name, agent, n_episodes=N)
