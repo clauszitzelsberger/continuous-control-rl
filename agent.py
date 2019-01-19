@@ -13,8 +13,8 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 class Agent():
     
     def __init__(self, state_size,
-                 action_size, buffer_size=int(1e5),
-                 batch_size=64, gamma=.99,
+                 action_size, buffer_size=int(1e6),
+                 batch_size=128, gamma=.99,
                  tau=1e-3, lr_a=1e-4,
                  lr_c=1e-3, weight_decay=1e-2,
                  seed=1):
@@ -63,7 +63,8 @@ class Agent():
         self.critic_target = \
             Critic(state_size, action_size, seed=seed).to(device)
         self.critic_optimizer = \
-            optim.Adam(self.critic_local.parameters(), lr=lr_c)
+            optim.Adam(self.critic_local.parameters(), lr=lr_c, 
+                       weight_decay=weight_decay)
             
         # Replay buffer
         self.memory = ReplayBuffer(action_size, buffer_size, batch_size, seed)
