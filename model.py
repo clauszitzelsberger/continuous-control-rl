@@ -1,6 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
+
+def hidden_init(layer):
+    fan_in = layer.weight.data.size()[0]
+    lim = 1. / np.sqrt(fan_in)
+    return (-lim, lim)
 
 class Actor(nn.Module):
     """Actor network"""
@@ -29,6 +35,11 @@ class Actor(nn.Module):
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))       
         return F.tanh(self.output(x))
+    
+    def reset_parameters(self):
+        self.fc1.weight.data.uniform_(*hidden_init(self.fc1))
+        self.fc2.weight.data.uniform_(*hidden_init(self.fc2))
+        self.output.weight.data.uniform_(-3e-3, 3e-3)
         
 
 class Critic(nn.Module):
@@ -59,3 +70,8 @@ class Critic(nn.Module):
         x = F.relu(self.fc1(state))
         x = torch.cat((x, action), dim=1)
         return self.output(x)
+    
+    def reset_parameters(self):
+        self.fc1.weight.data.uniform_(*hidden_init(self.fcs1))
+        self.fc2.weight.data.uniform_(*hidden_init(self.fc2))
+        self.output.weight.data.uniform_(-3e-3, 3e-3)
