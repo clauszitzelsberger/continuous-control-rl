@@ -91,7 +91,7 @@ class Agent():
         state = torch.from_numpy(state).float().unsqueeze(0).to(device)
         self.actor_local.eval()
         with torch.no_grad():
-            action = self.qnet_local(state).cpu().data.numpy()
+            action = self.actor_local(state).cpu().data.numpy()
         self.actor_local.train()
 
         if add_noise:
