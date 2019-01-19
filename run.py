@@ -4,11 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage.filters import gaussian_filter1d
 from collections import deque
-#import pdb
 
 from agent import Agent
-from model import Actor, Critic
-
 
 
 def initialize_env(unity_file):
