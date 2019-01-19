@@ -7,7 +7,7 @@ from collections import deque
 #import pdb
 
 from agent import Agent
-from model import QNetwork
+from model import Actor, Critic
 
 
 
@@ -47,14 +47,13 @@ def ddpg(env, brain_name,
     
     scores = []
     scores_window = deque(maxlen=100)
-    max_score = -np.Inf
     for e in range(1, n_episodes+1):
         env_info = env.reset(train_mode=True)[brain_name]
         state = env_info.vector_observations[0]
         agent.reset()
         score = 0
         while True:
-            action = agent.act(state, epsilon)
+            action = agent.act(state)
             env_info = env.step(action)[brain_name]
             next_state = env_info.vector_observations[0]
             reward = env_info.rewards[0]
@@ -72,7 +71,7 @@ def ddpg(env, brain_name,
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(e, np.mean(scores_window)), end="")
         if e % 100 == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(e, np.mean(scores_window)))
-        if np.mean(scores_window)>=13.0:
+        if np.mean(scores_window)>=30.0:
             print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(e-100, np.mean(scores_window)))
             torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
             torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
