@@ -16,7 +16,8 @@ class Agent():
                  action_size, buffer_size=int(1e5),
                  batch_size=64, gamma=.99,
                  tau=1e-3, lr_a=1e-4,
-                 lr_c=1e-3, weight_decay=1e-2):
+                 lr_c=1e-3, weight_decay=1e-2,
+                 seed=1):
         
         """Initialize an Agent object
         
@@ -46,7 +47,7 @@ class Agent():
         self.tau = tau
         self.lr_a = lr_a
         self.lr_c = lr_c
-        self.weight_decay = weight_decy
+        self.weight_decay = weight_decay
         
         # Actor networks
         self.actor_local = \
@@ -65,7 +66,7 @@ class Agent():
             optim.Adam(self.critic_local.parameters(), lr=lr_c)
             
         # Replay buffer
-        self.memory = ReplayBuffer(actions_size, buffer_size, batch_size, seed)
+        self.memory = ReplayBuffer(action_size, buffer_size, batch_size, seed)
         
         # Noise process
         self.noise = OUNoise(action_size, seed)
@@ -98,7 +99,7 @@ class Agent():
         return np.clip(action, -1, 1)
 
     
-    def __reset(self):
+    def reset(self):
         self.noise.reset()
     
     def __learn(self, sample, gamma):
