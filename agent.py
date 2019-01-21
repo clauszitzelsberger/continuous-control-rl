@@ -13,11 +13,12 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 class Agent():
     
     def __init__(self, state_size,
-                 action_size, buffer_size=int(1e6),
-                 batch_size=128, gamma=.99,
-                 tau=1e-3, lr_a=1e-4,
-                 lr_c=1e-3, weight_decay=1e-2,
-                 update_local=4, seed=1):
+                 action_size, n_agents=1,
+                 buffer_size=int(1e6), batch_size=128, 
+                 gamma=.99, tau=1e-3, 
+                 lr_a=1e-4, lr_c=1e-3, 
+                 weight_decay=1e-2, update_local=4, 
+                 seed=1):
         
         """Initialize an Agent object
         
@@ -25,6 +26,7 @@ class Agent():
         =====
             state_size (int): Dimension of states
             action_size (int): Dimension of actions
+            n_agents (int): Number of agents
             buffer_size (int): size of replay buffer
             batch_size (int): size of sample
             gamma (float): discount factor
@@ -39,9 +41,9 @@ class Agent():
         self.state_size = state_size
         self.action_size = action_size
         self.seed = random.seed(seed)
+        self.n_agents = n_agents
         
         # Hyperparameters
-        self.buffer_size = buffer_size
         self.buffer_size = buffer_size
         self.batch_size = batch_size
         self.gamma = gamma
@@ -79,7 +81,10 @@ class Agent():
         
     def step(self, state, action, reward, next_state, done):
         # Save experience in replay buffer
-        self.memory.add(state, action, reward, next_state, done)
+        for i in range(self.n_agents):
+            self.memory.add(state[i], action[i], 
+                            reward[i], next_state[i], 
+                            done[i])
         
         # Learn every UPDATE LOCAL time steps
         self.t_step += 1
@@ -97,14 +102,14 @@ class Agent():
             state (array_like): current state
             add_noise (bool): handles exploration
         """
-        state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+        state = torch.from_numpy(state).float().to(device)
         self.actor_local.eval()
         with torch.no_grad():
             action = self.actor_local(state).cpu().data.numpy()
         self.actor_local.train()
 
         if add_noise:
-            action += self.noise.sample()
+            action += [self.noise.sample() for i in range(self.n_agents)]
         return np.clip(action, -1, 1)
 
     
@@ -132,11 +137,12 @@ class Agent():
         Q_expected = self.critic_local(states, actions)
         
         # Compute loss
-        critic_loss = F.mse_loss(Q_targets, Q_expected)
+        critic_loss = F.mse_loss(Q_expected, Q_targets)
         
         # Minimize loss
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
+        torch.nn.utils.clip_grad_norm(self.critic_local.parameters(), 1)
         self.critic_optimizer.step()
         
         #----------------- Actor
@@ -243,6 +249,6 @@ class OUNoise:
         """Update internal state and return as a noise sample"""
         x = self.state
         dx = self.theta * (self.mu - x) + \
-            self.sigma * np.array([random.random() for _ in range(len(x))])
+            self.sigma * np.array([random.random() for i in range(len(x))])
         self.state = x + dx
         return self.state
