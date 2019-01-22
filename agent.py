@@ -18,7 +18,7 @@ class Agent():
                  gamma=.99, tau=1e-3, 
                  lr_a=1e-4, lr_c=1e-3, 
                  weight_decay=1e-2, update_local=4, 
-                 seed=1):
+                 n_updates=10, seed=1):
         
         """Initialize an Agent object
         
@@ -35,6 +35,7 @@ class Agent():
             lr_c (float): learning rate of critic
             weight_decay (float): L2 weight decay
             update_local (int): update local network after every x steps
+            n_updates (int): number of update steps per update
             seed (int): random seed
         """
         
@@ -52,6 +53,7 @@ class Agent():
         self.lr_c = lr_c
         self.weight_decay = weight_decay
         self.update_local = update_local
+        self.n_updates = n_updates
         
         # Actor networks
         self.actor_local = \
@@ -91,8 +93,9 @@ class Agent():
         if self.t_step % self.update_local == 0:
             # If enough samples are available in memory, get random subset and learn
             if len(self.memory) > self.batch_size:
-                sample = self.memory.sample()
-                self.__learn(sample, self.gamma)
+                for i in range(self.n_updates):
+                    sample = self.memory.sample()
+                    self.__learn(sample, self.gamma)
 
     def act(self, state, add_noise=True):
         """Returns action given a state according to current policy
