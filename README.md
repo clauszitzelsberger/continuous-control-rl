@@ -36,7 +36,7 @@ pip install pip install -r requirements.txt
 ```
 
 3. Download the Unity Environment
-Download the environment that matches your operation system, then place the file in the `Navigation_RL/` folder and unizip the file.  
+Download the environment that matches your operation system, then place the file in the `continuous-control-rl/` folder and unizip the file.  
 
 	- **Version 1: 1 Agent:**  
 		- [__Linux__](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/one_agent/Reacher_Linux.zip)
