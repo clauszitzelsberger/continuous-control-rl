@@ -70,7 +70,7 @@ def ddpg(env, brain_name,
         scores.append(score.mean(axis=0))
 
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(e, np.mean(scores_window)), end="")
-        if e % 100 == 0:
+        if e % 10 == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(e, np.mean(scores_window)))
         if np.mean(scores_window)>=30.0:
             print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(e-100, np.mean(scores_window)))
@@ -119,17 +119,17 @@ if __name__ == '__main__':
     # Hyperparameters
     N = 2000
     BUFFER_SIZE = int(1e6)
-    BATCH_SIZE = 128
+    BATCH_SIZE = 1024
     GAMMA = .99
     TAU = 1e-3
-    LEARNING_RATE_ACTOR = 1e-3
-    LEARNING_RATE_CRITIC = 1e-2
+    LEARNING_RATE_ACTOR = 1e-4
+    LEARNING_RATE_CRITIC = 3e-4
     WEIGHT_DECAY = 1e-2
-    UPDATE_LOCAL = 4
+    SEED = 0
     
     
     env, brain_name, state_size, action_size, n_agents = \
-        initialize_env('Reacher_1/Reacher.x86_64')
+        initialize_env('Reacher_20/Reacher.x86_64')
 
     # Initialize agent
     agent = Agent(state_size, action_size,
@@ -137,10 +137,10 @@ if __name__ == '__main__':
                   buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE,
                   gamma=GAMMA, tau=TAU,
                   lr_a=LEARNING_RATE_ACTOR, lr_c=LEARNING_RATE_CRITIC,
-                  weight_decay=WEIGHT_DECAY, update_local=UPDATE_LOCAL)
+                  weight_decay=WEIGHT_DECAY, seed=SEED)
     
     # Train agent
-    scores = ddpg(env, brain_name, agent, n_episodes=N)
+    scores = ddpg(env, brain_name, agent, n_agents, n_episodes=N)
     
     plot_scores({'DDPG': scores})
     

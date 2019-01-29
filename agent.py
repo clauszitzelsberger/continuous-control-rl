@@ -17,8 +17,7 @@ class Agent():
                  buffer_size=int(1e6), batch_size=128, 
                  gamma=.99, tau=1e-3, 
                  lr_a=1e-4, lr_c=1e-3, 
-                 weight_decay=1e-2, update_local=4, 
-                 n_updates=10, seed=1):
+                 weight_decay=1e-2, seed=1):
         
         """Initialize an Agent object
         
@@ -52,8 +51,6 @@ class Agent():
         self.lr_a = lr_a
         self.lr_c = lr_c
         self.weight_decay = weight_decay
-        self.update_local = update_local
-        self.n_updates = n_updates
         
         # Actor networks
         self.actor_local = \
@@ -83,19 +80,14 @@ class Agent():
         
     def step(self, state, action, reward, next_state, done):
         # Save experience in replay buffer
-        for i in range(self.n_agents):
-            self.memory.add(state[i], action[i], 
-                            reward[i], next_state[i], 
-                            done[i])
+        for state, action, reward, next_state, done in zip(state, action, reward, next_state, done):
+            self.memory.add(state, action, reward, next_state, done)
+
+        # Learn, if enough samples are available in memory
+        if len(self.memory) > self.batch_size:
+            sample = self.memory.sample()
+            self.__learn(sample, self.gamma)
         
-        # Learn every UPDATE LOCAL time steps
-        self.t_step += 1
-        if self.t_step % self.update_local == 0:
-            # If enough samples are available in memory, get random subset and learn
-            if len(self.memory) > self.batch_size:
-                for i in range(self.n_updates):
-                    sample = self.memory.sample()
-                    self.__learn(sample, self.gamma)
 
     def act(self, state, add_noise=True):
         """Returns action given a state according to current policy
