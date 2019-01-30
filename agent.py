@@ -14,10 +14,10 @@ class Agent():
     
     def __init__(self, state_size,
                  action_size, n_agents=1,
-                 buffer_size=int(1e6), batch_size=128, 
+                 buffer_size=int(1e7), batch_size=256, 
                  gamma=.99, tau=1e-3, 
                  lr_a=1e-4, lr_c=1e-3, 
-                 weight_decay=1e-2, seed=1):
+                 weight_decay=0, random_seed=1):
         
         """Initialize an Agent object
         
@@ -33,14 +33,12 @@ class Agent():
             lr_a (float): learning rate of actor
             lr_c (float): learning rate of critic
             weight_decay (float): L2 weight decay
-            update_local (int): update local network after every x steps
-            n_updates (int): number of update steps per update
             seed (int): random seed
         """
         
         self.state_size = state_size
         self.action_size = action_size
-        self.seed = random.seed(seed)
+        self.seed = random.seed(random_seed)
         self.n_agents = n_agents
         
         # Hyperparameters
@@ -54,26 +52,26 @@ class Agent():
         
         # Actor networks
         self.actor_local = \
-            Actor(state_size, action_size, seed=seed).to(device)
+            Actor(state_size, action_size, seed=random_seed).to(device)
         self.actor_target = \
-            Actor(state_size, action_size, seed=seed).to(device)
+            Actor(state_size, action_size, seed=random_seed).to(device)
         self.actor_optimizer = \
             optim.Adam(self.actor_local.parameters(), lr=lr_a)
             
         # Critic networks
         self.critic_local = \
-            Critic(state_size, action_size, seed=seed).to(device)
+            Critic(state_size, action_size, seed=random_seed).to(device)
         self.critic_target = \
-            Critic(state_size, action_size, seed=seed).to(device)
+            Critic(state_size, action_size, seed=random_seed).to(device)
         self.critic_optimizer = \
             optim.Adam(self.critic_local.parameters(), lr=lr_c, 
                        weight_decay=weight_decay)
             
         # Replay buffer
-        self.memory = ReplayBuffer(action_size, buffer_size, batch_size, seed)
+        self.memory = ReplayBuffer(action_size, buffer_size, batch_size, random_seed)
         
         # Noise process
-        self.noise = OUNoise(action_size, seed)
+        self.noise = OUNoise(action_size, random_seed)
         
         # Time step
         self.t_step = 0
@@ -104,7 +102,7 @@ class Agent():
         self.actor_local.train()
 
         if add_noise:
-            action += [self.noise.sample() for i in range(self.n_agents)]
+            action += self.noise.sample()
         return np.clip(action, -1, 1)
 
     
@@ -137,7 +135,6 @@ class Agent():
         # Minimize loss
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
-        torch.nn.utils.clip_grad_norm(self.critic_local.parameters(), 1)
         self.critic_optimizer.step()
         
         #----------------- Actor
