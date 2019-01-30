@@ -120,24 +120,22 @@ def load_checkpoints(agent, filepath_actor, filepath_critic):
 if __name__ == '__main__':
     # Hyperparameters
     N = 2000
-    BUFFER_SIZE = int(1e6)
-    BATCH_SIZE = 1024
+    BUFFER_SIZE = int(1e7)
+    BATCH_SIZE = 256
     GAMMA = .99
     TAU = 1e-3
     LEARNING_RATE_ACTOR = 1e-4
     LEARNING_RATE_CRITIC = 1e-3
-    WEIGHT_DECAY = 1e-2
-    SEED = 0
-    
+    WEIGHT_DECAY = 0.0
+    SEED = 2
     
     env, brain_name, state_size, action_size, n_agents = \
         initialize_env('Reacher_20/Reacher.x86_64')
 
     # Initialize agent
     agent = Agent(state_size, action_size,
-                  n_agents,
-                  buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE,
-                  gamma=GAMMA, tau=TAU,
+                  n_agents, buffer_size=BUFFER_SIZE, 
+                  batch_size=BATCH_SIZE, gamma=GAMMA, tau=TAU,
                   lr_a=LEARNING_RATE_ACTOR, lr_c=LEARNING_RATE_CRITIC,
                   weight_decay=WEIGHT_DECAY, seed=SEED)
     
