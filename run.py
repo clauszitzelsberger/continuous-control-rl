@@ -18,7 +18,7 @@ def initialize_env(unity_file):
 
     # Get state and action spaces
     env_info = env.reset(train_mode=True)[brain_name]
-    state_size = len(env_info.vector_observations[0])
+    state_size = env_info.vector_observations.shape[1]
     action_size = brain.vector_action_space_size
     n_agents = len(env_info.agents)
     
@@ -34,7 +34,7 @@ def initialize_env(unity_file):
 
 def ddpg(env, brain_name,
          agent, n_agents,
-         n_episodes=2000, t_max=1000):
+         n_episodes=2000, t_max=3000):
     """Deep Determinitic Policy Gradient.
 
     Params
@@ -43,6 +43,7 @@ def ddpg(env, brain_name,
         brain_name (string): brain name of initialized environment
         agent: initialized agent object
         n_episodes (int): maximum number of training episodes
+        t_max (int): maximum timesteps in episode
     """
     
     scores = []
@@ -66,8 +67,9 @@ def ddpg(env, brain_name,
                 break
 
         # Relative score
-        scores_window.append(score.mean(axis=0))
-        scores.append(score.mean(axis=0))
+        avg_score = np.mean(score)
+        scores_window.append(avg_score)
+        scores.append(avg_score)
 
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(e, np.mean(scores_window)), end="")
         if e % 10 == 0:
@@ -123,7 +125,7 @@ if __name__ == '__main__':
     GAMMA = .99
     TAU = 1e-3
     LEARNING_RATE_ACTOR = 1e-4
-    LEARNING_RATE_CRITIC = 3e-4
+    LEARNING_RATE_CRITIC = 1e-3
     WEIGHT_DECAY = 1e-2
     SEED = 0
     
