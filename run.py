@@ -53,7 +53,6 @@ def ddpg(env, brain_name,
         state = env_info.vector_observations
         agent.reset()
         score = np.zeros(n_agents)
-        #while True:
         for _ in range(1, t_max):
             action = agent.act(state)
             env_info = env.step(action)[brain_name]
@@ -137,7 +136,7 @@ if __name__ == '__main__':
                   n_agents, buffer_size=BUFFER_SIZE, 
                   batch_size=BATCH_SIZE, gamma=GAMMA, tau=TAU,
                   lr_a=LEARNING_RATE_ACTOR, lr_c=LEARNING_RATE_CRITIC,
-                  weight_decay=WEIGHT_DECAY, seed=SEED)
+                  weight_decay=WEIGHT_DECAY, random_seed=SEED)
     
     # Train agent
     scores = ddpg(env, brain_name, agent, n_agents, n_episodes=N)
