@@ -67,4 +67,5 @@ Apart from the `Readme.md` and the `requirements.txt` file this repository consi
 2. `model.py`: Actor and Critc Network classes
 3. `run.py`: Script which will train the agent. Can be run directly from the terminal.
 4. `report.ipynb`: As an alternative to the `run.py` script this Jupyter Notebook has a step-by-step structure. Here the learning algorithm is described in detail
-5. `checkpoint.pth`: Contains the weights of a successful QNetwork
+5. `checkpoint_actor.pth`: Contains the weights of a successful Actor Network
+6. `checkpoint_critic.pth`: Contains the weights of a successful Critic Network
